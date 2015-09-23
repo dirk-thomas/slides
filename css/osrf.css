@@ -15,16 +15,15 @@
 .reveal a.glyphicon:hover {
   color: #2a76dd; }
 
-.osrf-horizontal {
-  background: url('../image/osrf-horizontal.svg');
-  background-repeat: no-repeat;
-  background-size: contain;
+.osrf-signature {
   bottom: -1.1em;
   left: 0;
   position: absolute;
-  height: 1.6em;
-  width: 100%;
-}
+  height: 1.8em;
+  width: 100%; }
+.reveal .slides .osrf-signature {
+  text-align: left; }
+
 .progress {
   margin-bottom: 0; }
 
@@ -83,8 +82,6 @@
 /*********************************************
  * SVG
  *********************************************/
-svg {
-  border: 1px solid #f0f0f0; }
 svg ellipse, svg g path, svg polyline, svg rect {
   fill: none; }
 svg ellipse, svg line, svg g path, svg polyline, svg rect {

@@ -41,7 +41,16 @@
 		<div class="reveal">
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
-				<div class="osrf-horizontal"></div>
+				<div class="osrf-signature">
+					<svg id="osrf-logo" height="1.8em" width="1.8em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<image id="osrf-logo-image" x="0" y="0" height="100%" width="100%" xlink:href="image/osrf-logo.svg"/>
+						<animateTransform id="osrf-logo-animate" xlink:href="#osrf-logo-image" attributeName="transform" attributeType="XML"
+							type="rotate" from="0 27 27" to="360 27 27" dur="0.7s" begin="indefinite" repeatCount="0" fill="freeze"/>
+					</svg>
+					<svg id="osrf-lettering" height="1.4em" width="32%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<image x="0" y="0" height="75%" width="100%" xlink:href="image/osrf-lettering.svg"/>
+					</svg>
+				</div>
 
 				<section>
 					<h1>State of ROS 2</h1>
@@ -576,6 +585,9 @@ private:
 					{ src: 'plugin/zoom-js/zoom.js', async: true },
 					{ src: 'plugin/notes/notes.js', async: true }
 				]
+			});
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+				document.getElementById('osrf-logo-animate').beginElement();
 			});
 		</script>
 	</body>
