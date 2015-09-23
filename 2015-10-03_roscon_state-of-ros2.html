@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>State of ROS 2 - Demos and the technology behind</title>
+
+		<meta name="description" content="Description of the current state of ROS 2 at ROSCon 2015">
+		<meta name="author" content="Dirk Thomas">
+
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/bootstrap-3.3.5.css">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/default.css">
+
+		<link rel="stylesheet" href="css/osrf.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<div class="osrf-horizontal"></div>
+
+				<section>
+					<h1>State of ROS 2</h1>
+					<h3>Demos and the technology behind</h3>
+					<p>
+						<small>
+							Oct. 3rd 2015<br/>
+							Dirk Thomas, Esteve Fernandez, William Woodall<br/>
+							ROSCon 2015, Hamburg, Germany
+						</small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Goals of ROS 2</h2>
+					<div class="row">
+						<div class="col-md-5 col-md-offset-1" style="height: 9em;">
+							<img src="image/multi-robot-systems.png" class="center-block" height="60%" alt=""/>
+							<small>Support multi-robot systems<br/>
+							involving unreliable networks</small>
+						</div>
+						<div class="col-md-5" style="height: 9em;">
+							<img src="image/bosch-lawnmower.png" class="center-block" height="60%" alt=""/>
+							<small>Remove the gap between<br/>
+							prototyping and final products</small>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4" style="height: 9em;">
+							<img src="image/micro-controller.png" class="center-block" height="60%" alt=""/>
+							<small><i>&ldquo;Bare-metal&rdquo;</i><br/>
+							micro controller</small>
+						</div>
+						<div class="col-md-4" style="height: 9em;">
+							<img src="image/robonaut2.png" class="center-block" height="60%" alt=""/>
+							<small>Support for<br/>
+							real-time control</small>
+						</div>
+						<div class="col-md-4" style="height: 9em;">
+							<img src="image/linux-windows-osx.png" class="center-block" height="60%" alt=""/>
+							<small>Cross platform<br/>
+							support</small>
+						</div>
+					</div>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## Outline
+
+						- Walk through multiple demos
+							* https://github.com/ros2/ros2/wiki/Tutorials
+
+						- Technical background information
+
+						Note:
+						All following demos build and run on the three platforms.
+					</script>
+				</section>
+
+				<section>
+					<section data-markdown data-separator-notes="^Note:">
+						<script type="text/template">
+							## Publish / Subscribe Demo
+
+							Note:
+							Run the following commands:
+							- Shell A: `. ros2_ws/install/setup.bash`, `talker` publishing messages
+							- Shell B: `. ros2_ws/install/setup.bash`, `listener` subscribing to messages
+						</script>
+					</section>
+
+					<section>
+						<h2>Publish / Subscribe</h2>
+						<br/>
+						<br/>
+						<svg id="publish-subscribe" width="860" height="330">
+							<marker id="publish-subscribe_end-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z"/>
+							</marker>
+							<marker id="publish-subscribe_end-triangle-red" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z" fill="#c7254e"/>
+							</marker>
+							<line x1="50%" y1="0" x2="50%" y2="100%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
+							<g title="Publisher">
+								<rect x="10" y="10" width="330" height="40"/>
+								<text x="175" y="40" text-anchor="middle">talker</text>
+							</g>
+							<g title="Subscriber">
+								<rect x="520" y="10" width="330" height="40"/>
+								<text x="685" y="40" text-anchor="middle">listener</text>
+							</g>
+							<g title="rclcpp" class="fragment">
+								<rect x="10" y="60" width="330" height="40"/>
+								<text x="175" y="90" text-anchor="middle">rclcpp</text>
+								<rect x="520" y="60" width="330" height="40"/>
+								<text x="685" y="90" text-anchor="middle">rclcpp</text>
+							</g>
+							<g title="rmw interface" class="fragment">
+								<rect x="10" y="110" width="330" height="40"/>
+								<text x="175" y="140" text-anchor="middle">rmw interface</text>
+								<rect x="520" y="110" width="330" height="40"/>
+								<text x="685" y="140" text-anchor="middle">rmw interface</text>
+							</g>
+							<g title="rmw" class="fragment">
+								<g style="opacity: 0.5">
+									<rect x="10" y="160" width="160" height="40"/>
+									<text x="90" y="190" text-anchor="middle">Connext</text>
+								</g>
+								<rect x="180" y="160" width="160" height="40"/>
+								<text x="260" y="190" text-anchor="middle">OpenSplice</text>
+								<rect x="520" y="160" width="160" height="40"/>
+								<text x="600" y="190" text-anchor="middle">Connext</text>
+								<g style="opacity: 0.5">
+									<rect x="690" y="160" width="160" height="40"/>
+									<text x="770" y="190" text-anchor="middle">OpenSplice</text>
+								</g>
+							</g>
+							<g title="choose-rmw-impl" class="fragment current-visible">
+								<line x1="320" y1="250" x2="260" y2="200" style="stroke: #c7254e;" marker-end="url(#publish-subscribe_end-triangle-red)"/>
+								<line x1="540" y1="250" x2="600" y2="200" style="stroke: #c7254e;" marker-end="url(#publish-subscribe_end-triangle-red)"/>
+								<text x="50%" y="280" text-anchor="middle" style="fill: #c7254e; stroke: #c7254e;">selected at link-time</text>
+								<text x="50%" y="320" text-anchor="middle" style="fill: #c7254e; stroke: #c7254e;">of the executables</text>
+							</g>
+							<g title="network" class="fragment">
+								<polyline points="260,200 260,250 600,250 600,200" marker-end="url(#publish-subscribe_end-triangle)"/>
+								<text x="50%" y="300" text-anchor="middle">DDS Interoperability Wire Protocol</text>
+							</g>
+						</svg>
+					</section>
+
+					<section data-transition="slide-in fade-out">
+						<h2>Source code of the <i>listener</i></h2>
+						<pre><code class="cpp" data-trim>
+&nbsp;  void callback(const std_msgs::String::ConstPtr & msg)
+
+{
+     ROS_INFO("I heard: [%s]", msg->data.c_str());
+
+}
+
+int main(int argc, char * argv[])
+{
+     ros::init(argc, argv, "listener");
+
+
+     ros::NodeHandle node;
+
+
+     ros::Subscriber sub = node.subscribe("chatter", 10, callback);
+
+
+
+     ros::spin();
+
+
+  return 0;
+}
+						</code></pre>
+					</section>
+
+					<section data-transition="fade-in slide-out">
+						<h2>Source code of the <i>listener</i></h2>
+						<pre><code class="cpp" data-trim>
+// void callback(const std_msgs::String::ConstPtr & msg)
+void callback(std_msgs::msg::String::ConstSharedPtr msg)
+{
+  // ROS_INFO("I heard: [%s]", msg->data.c_str());
+  printf("I heard: [%s]\n", msg->data.c_str());
+}
+
+int main(int argc, char * argv[])
+{
+  // ros::init(argc, argv, "listener");
+  rclcpp::init(argc, argv);
+
+  // ros::NodeHandle node;
+  auto node = rclcpp::Node::make_shared("listener");
+
+  // ros::Subscriber sub = node.subscribe("chatter", 10, callback);
+  auto sub = node->create_subscription&lt;std_msgs::msg::String>(
+    "chatter", rmw_qos_profile_default, callback);
+
+  // ros::spin();
+  rclcpp::spin(node);
+
+  return 0;
+}
+						</code></pre>
+
+						<p style="position: absolute; top: 20%; right: 10%; width: 20%; border: 3px solid #353535; color: #2a76dd;" class="fragment fade-out" data-fragment-index="1">
+							ROS 1 code<br/>in comments.
+						</p>
+						<p style="position: absolute; top: 72%; right: 8%; width: 50%; border: 3px solid #353535; color: #2a76dd;" class="fragment current-visible" data-fragment-index="1">
+							C++11 wherever it makes it easier,<br/>the callback can be a lambda.
+						</p>
+						<svg id="c++11-highlight" width="100%" height="100%" style="position: absolute; top: 0; left: 0; fill: none;" class="fragment current-visible" data-fragment-index="1">
+							<line x1="21%" y1="24%" x2="59.5%" y2="24%" style="stroke: #2a76dd;"/>
+							<line x1="8.5%" y1="60.5%" x2="13%" y2="60.5%" style="stroke: #2a76dd;"/>
+							<line x1="8.5%" y1="69.7%" x2="13%" y2="69.7%" style="stroke: #2a76dd;"/>
+							<line x1="48%" y1="72.8%" x2="57%" y2="72.8%" style="stroke: #2a76dd;" stroke-dasharray="5,5"/>
+						</svg>
+
+						<p style="position: absolute; top: 33%; right: 8%; width: 43%; border: 3px solid #353535; color: #2a76dd;" class="fragment current-visible" data-fragment-index="2">
+							The node's name is passed<br/>to the node constructor,<br/>not the global init() function.
+						</p>
+						<svg id="node-name-highlight" width="100%" height="100%" style="position: absolute; top: 0; left: 0; fill: none;" class="fragment current-visible" data-fragment-index="2">
+							<marker id="node-name_end-triangle-blue" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z" fill="#2a76dd"/>
+							</marker>
+							<line x1="40%" y1="48.5%" x2="48%" y2="57.5%" style="stroke: #2a76dd;" marker-end="url(#node-name_end-triangle-blue)"/>
+						</svg>
+
+						<p style="position: absolute; top: 72%; right: 30%; width: 40%; border: 3px solid #353535; color: #2a76dd;" class="fragment" data-fragment-index="3">
+							spin() is called <i>on</i> the node,<br/>not globally.
+						</p>
+						<svg id="spin-highlight" width="100%" height="100%" style="position: absolute; top: 0; left: 0; fill: none;" class="fragment current-visible" data-fragment-index="3">
+							<line x1="8.5%" y1="82%" x2="27%" y2="82%" style="stroke: #2a76dd;"/>
+						</svg>
+
+						<aside class="notes">
+							End time: 10:00
+							Eventually shorter to have more time for the other parts.
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown data-separator-notes="^Note:">
+						<script type="text/template">
+							## Unified node / nodelet interface
+							### Transparent intra process communication
+
+							`We cannot present the items highlighted in red`
+
+							- Demo
+								+ The two nodes exchange large data (e.g. images, point clouds)
+								+ Change the deployment to run them within the same process
+								+ `Two nodes publish / subscribe but with custom non­ROS types`
+							- Technical background
+								+ Each component gets compiled into a library
+								+ Either link against “default” main
+								+ Or load within an existing process
+									* Efficiently locate plugins using the ament resource index
+									* Intra process communication using shared pointers, more details
+									* `Mention type masquerading: no conversion within the process, implicit conversion when communicated outside`
+
+							Note:
+							10 minutes for these slide.
+						</script>
+					</section>
+
+					<section>
+						<h2>Subclass from Component</h2>
+						<h3>instead of writing your own main()</h3>
+
+						<pre><code class="cpp" data-trim>
+class Listener : public Node
+{
+public:
+  Listener() : Node("listener")
+  {
+    sub_ = this->create_subscription&lt;std_msgs::msg::String>(
+      "chatter", rmw_qos_profile_default, callback);
+  }
+  void callback(std_msgs::msg::String::ConstSharedPtr msg)
+  {
+    printf("I heard: [%s]\n", msg->data.c_str());
+  }
+private:
+  Subscriber::SharedPtr sub_;
+}
+						</code></pre>
+
+						<ul>
+							<li>Compile into a library and
+								<ul>
+									<li>either link it with a &ldquo;default&rdquo; <code>main()</code> function</li>
+									<li>or load it dynamically into another process<br/>(like a nodelet manager in ROS 1)</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## Deterministic startup behavior
+
+						`We cannot present the items highlighted in red`
+
+						- Demo
+							+ Starting two nodes via a launch file
+							+ `Exchange information after both nodes are running, not dropping the first messages`
+							+ `Pause, change, resume cycle using component service interface`
+						- Technical background
+							+ Python based launch file, show flexibility and power
+							+ `Component life cycle`
+							+ `General service interface of components`
+
+						Note:
+						Planned 10 min. but since the content is much less probably only a few minutes.
+					</script>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## Quality of Service
+
+						`We cannot present the items highlighted in red`
+
+						- Demo
+							+ Subscribe to image stream from a remote machine
+							+ Multicast demo with multiple subscribers
+							+ Choosing different QoS parameters
+						- Technical background
+							+ DDS, UDP and QoS
+							+ Proposed QoS profiles and use cases
+							+ Link to draft article
+							+ `Integration with existing DDS QoS policies`
+
+						Note:
+						8 minutes for these slide.
+					</script>
+				</section>
+
+				<section>
+					<section>
+						<h2>Bridging between ROS versions</h2>
+						<br/>
+						<div class="row">
+							<div class="col-md-6">
+								<b>ROS 2</b><br/>
+								<ul>
+									<li>New features</li>
+									<li>Superior communication</li>
+								</ul>
+							</div>
+							<div class="col-md-6">
+								<b>ROS 1</b><br/>
+								<ul>
+									<li>Plenty of tools</li>
+									<li>Existing funtionality</li>
+								</ul>
+							</div>
+						</div>
+						<br/>
+						<br/>
+						<svg id="publisher-subscriber" width="85%" height="80">
+							<marker id="publisher-subscriber_start-triangle" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 10 0 L 0 5 L 10 10 z"/>
+							</marker>
+							<marker id="publisher-subscriber_end-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z"/>
+							</marker>
+							<g title="ROS 2 node">
+								<ellipse cx="20%" cy="40" rx="15%" ry="36"/>
+								<text x="20%" y="48" text-anchor="middle">node</text>
+							</g>
+							<g title="ROS 1 node">
+								<ellipse cx="80%" cy="40" rx="15%" ry="36"/>
+								<text x="80%" y="48" text-anchor="middle">node</text>
+							</g>
+							<g title="communication">
+								<line x1="35%" y1="40" x2="65%" y2="40" marker-start="url(#publisher-subscriber_start-triangle)" marker-end="url(#publisher-subscriber_end-triangle)" stroke-dasharray="5,5"/>
+								<text x="50%" y="32" text-anchor="middle" stroke="#353535">?</text>
+							</g>
+						</svg>
+					</section>
+
+					<section>
+						<h2>Dynamic Bridge</h2>
+						<br/>
+						<br/>
+						<svg id="dynamic-bridge" width="860" height="340">
+							<marker id="dynamic_bridge_start-triangle" viewBox="0 0 10 10" refX="0" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 10 0 L 0 5 L 10 10 z"/>
+							</marker>
+							<marker id="dynamic_bridge_end-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z"/>
+							</marker>
+							<marker id="dynamic_bridge_end-triangle-red" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+								<path d="M 0 0 L 10 5 L 0 10 z" fill="#c7254e"/>
+							</marker>
+							<line x1="50%" y1="0" x2="50%" y2="100%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
+							<g title="ROS 2 publisher with topic">
+								<ellipse cx="140" cy="40" rx="130" ry="30"/>
+								<text x="140" y="49" text-anchor="middle">ROS 2 publisher</text>
+								<polyline points="140,70 140,120 235,120" marker-end="url(#dynamic_bridge_end-triangle)"/>
+								<rect x="235" y="100" width="100" height="40"/>
+								<text x="285" y="130" text-anchor="middle">image</text>
+							</g>
+							<g title="ROS 1 subscriber with topic">
+								<ellipse cx="720" cy="40" rx="130" ry="30"/>
+								<text x="720" y="49" text-anchor="middle">ROS 1 subscriber</text>
+								<polyline points="625,120 720,120 720,70" marker-end="url(#dynamic_bridge_end-triangle)"/>
+								<rect x="525" y="100" width="100" height="40"/>
+								<text x="575" y="130" text-anchor="middle">image</text>
+							</g>
+							<g title="bridge" class="fragment">
+								<ellipse cx="430" cy="200" rx="80" ry="30" style="fill: white;"/>
+								<text x="430" y="208" text-anchor="middle">bridge</text>
+							</g>
+							<g title="topic introspection" class="fragment current-visible">
+								<path d="M 400 230 Q 200 300 260 140" style="stroke: #c7254e;" marker-end="url(#dynamic_bridge_end-triangle-red)"/>
+								<path d="M 460 230 Q 660 300 600 140" style="stroke: #c7254e;" marker-end="url(#dynamic_bridge_end-triangle-red)"/>
+								<text x="50%" y="280" text-anchor="middle" style="fill: #c7254e; stroke: #c7254e;">check available topics:</text>
+								<text x="50%" y="320" text-anchor="middle" style="fill: #c7254e; stroke: #c7254e;">get topic name and topic type</text>
+							</g>
+							<g title="dynamic connection" class="fragment">
+								<polyline points="285,140 285,200 350,200" marker-end="url(#dynamic_bridge_end-triangle)"/>
+								<polyline points="510,200 575,200 575,140" marker-end="url(#dynamic_bridge_end-triangle)"/>
+							</g>
+						</svg>
+					</section>
+
+					<section data-markdown data-separator-notes="^Note:">
+						<script type="text/template">
+							## Bridge Demo
+
+							Note:
+							Run the following commands:
+							- Shell A: `. /opt/ros/indigo/setup.bash`, `roscore`
+							- Shell B: `. ros2_ws/install/setup.bash`, `export ROS_MASTER_URI=http://localhost:11311`, `dynamic_bridge`
+							- Shell C: `. /opt/ros/indigo/setup.bash`, `rosrun usb_cam usb_cam_node usb_cam/image_raw:=image` publishing images
+							- Shell D: `. /opt/ros/indigo/setup.bash`, `rqt` perspective with image view and publisher plugin
+							- Show incoming ROS 1 images.
+							- Shell C: Ctrl-C
+							- Show "frozen" last image.
+							- Shell E: `. ros2_ws/install/setup.bash`, `cam2image` publishing images
+							- Show console of shell B.
+							- Show incoming ROS 2 images.
+							- Trigger flipping.
+							- Show incoming flipped ROS 2 images.
+						</script>
+					</section>
+
+					<section data-markdown data-separator-notes="^Note:">
+						<script type="text/template">
+							## Technical background
+
+							- Currently implemented in C++
+							- Find all message definitions
+								+ in ROS 1 using the `rosmsg` API (crawls the FS &#9785;)
+								+ in ROS 2 using the `ament resource index` [](https://github.com/ament/ament_cmake/blob/master/ament_cmake_core/doc/resource_index.md)<!-- .element: class="glyphicon glyphicon-file" --> (no crawling &#128526;)
+							- Generate mappings between ROS 1 types and ROS 2 types
+								+ automatic rules
+								+ optionally custom rules (specified in a `.yaml` file)
+								+ &forall; type pairs
+									* register at a factory
+									* generate conversion functions (ROS 1 &harr; ROS 2)
+							- Build the bridge
+								+ use `roscpp` found via `pkg-config`
+								+ use `rclcpp` found via `CMake find_package()`
+							- `Challenge`: all header files must be non-colliding (!)
+
+							Note:
+							7 minutes for these slide.
+						</script>
+					</section>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## Roadmap
+
+						- First release (`Alpha 1`) was on Sep. 1st
+							+ https://github.com/ros2/ros2/wiki/Alpha1-Overview
+						- Roadmap <!-- .element: class="fragment" data-fragment-index="1" -->
+							+ Upcoming features group and ordered <!-- .element: class="fragment" data-fragment-index="1" -->
+								https://github.com/ros2/ros2/wiki/Roadmap <!-- .element: class="fragment" data-fragment-index="1" -->
+						- Current work items for <!-- .element: class="fragment" data-fragment-index="2" -->
+							`Alpha 2` <!-- .element: class="fragment" data-fragment-index="2" -->
+							+ Component life cycle <!-- .element: class="fragment" data-fragment-index="2" -->
+								* Introspection and orchestration APIs <!-- .element: class="fragment" data-fragment-index="2" -->
+								* Using `class_loader` / `pluginlib` <!-- .element: class="fragment" data-fragment-index="2" -->
+							+ Launch system <!-- .element: class="fragment" data-fragment-index="2" -->
+								* Using life cycle and orchestration <!-- .element: class="fragment" data-fragment-index="2" -->
+							+ Continue work on ROS client libraries <!-- .element: class="fragment" data-fragment-index="2" -->
+								* Solve technical challenges in C++ <!-- .element: class="fragment" data-fragment-index="2" -->
+								* C as well as Python API <!-- .element: class="fragment" data-fragment-index="2" -->
+
+						Note:
+						2 minutes for this slide
+					</script>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## Related presentations
+
+						- **ROS 2 on "small" embedded systems**
+							+ already presented in the morning by *Morgan*
+						- **Real-time Performance in ROS 2**
+							+ upcoming presentation from *Jackie* and *Adolfo*
+
+						Note:
+						1 minute for this slide
+					</script>
+				</section>
+
+				<section>
+					<h2 style="text-align: left;">Questions...</h2>
+					<br/>
+					<br/>
+					<br/>
+					<p style="text-align: right;">
+						For more information go to:<br/>
+						<a href="http://www.ros2.org">www.ros2.org</a>
+					</p>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				slideNumber: true,
+				history: true,
+				transition: 'convex',
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
