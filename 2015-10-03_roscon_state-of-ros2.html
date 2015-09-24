@@ -451,8 +451,8 @@ private:
 
               `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
 
-              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 0` publish images captured from the camera and use best effort reliability
-              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 1` publish images captured from the camera and use reliable communication
+              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 1` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
             </script>
@@ -469,8 +469,6 @@ private:
 
               - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 0` publish images captured from the camera and use best effort reliability
               - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
-              - Shell C: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
-              - Shell D: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
             </script>
