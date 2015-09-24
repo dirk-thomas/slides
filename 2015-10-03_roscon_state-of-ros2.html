@@ -224,7 +224,7 @@ int main(int argc, char * argv[])
   auto node = rclcpp::Node::make_shared("listener");
 
   // ros::Subscriber sub = node.subscribe("chatter", 10, callback);
-  auto sub = node->create_subscription<std_msgs::msg::String>(
+  auto sub = node->create_subscription&lt;std_msgs::msg::String>(
     "chatter", rmw_qos_profile_default, callback);
 
   // ros::spin();
