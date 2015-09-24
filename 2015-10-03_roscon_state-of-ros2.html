@@ -443,14 +443,20 @@ private:
 
         <section>
           <section>
-            <h3>DDS brings QoS to ROS for free</h3>
+            <h2>DDS provides QoS &ldquo;for free&rdquo;</h2>
             <br/>
 
             <ul>
-              <li>Switch from TCP (ROS1) to UDP (ROS2) adds support for multicast and QoS</li>
-              <li>Frees ROS2 developers from implementing complex QoS logic</li>
-              <li>Industry-proven QoS strategies, extensive DDS documentation and shared knowledge</li>
-              <li>Support unreliable networks, ideal for next generation of robotics: drones, IoT, high latency links, etc.</li>
+              <li>Industry-proven QoS strategies
+                <ul>
+                  <li>Extensive DDS documentation</li>
+                  <li>Shared knowledge</li>
+                  <li>Frees us from implementing a complex custom solution</li>
+                </ul>
+                <br/>
+              </li>
+              <li>Using UDP (instead of TCP) allows multicasting<br/><br/></li>
+              <li>Support unreliable networks, e.g. drones, IoT, high latency links</li>
             </ul>
           </section>
 
@@ -487,26 +493,26 @@ private:
           </section>
 
           <section>
-            <h3>Fine tuning of QoS settings</h3>
+            <h2>Some of the QoS settings</h2>
             <br/>
 
-            <ul>
-              <li>Reliability
+            <ul style="list-style-type: none;">
+              <li><b>Reliability</b>
                 <ul>
-                  <li>Best effort - samples arrive on time at the expense of losing some</li>
-                  <li>Reliable - all samples must reach the other end</li>
+                  <li><code>Best effort</code>: samples arrive &ldquo;on time&ldquo;<br/> at the expense of losing some</li>
+                  <li><code>Reliable</code>: all samples must reach the other end</li>
                 </ul>
               </li>
-              <li>History
+              <li><b>History</b>
                 <ul>
-                  <li>Keep last - only store N samples, configurable with queue depth option</li>
-                  <li>Keep all - store all samples</li>
+                  <li><code>Keep last</code>: only store <i>N</i> samples,<br/>configurable with queue depth option</li>
+                  <li><code>Keep all</code>: store all samples</li>
                 </ul>
               </li>
-              <li>Durability
+              <li><b>Durability</b>
                 <ul>
-                  <li>Volatile - no persistence</li>
-                  <li>Transient local - durable data is maintained by the writer
+                  <li><code>Volatile</code>: no persistence</li>
+                  <li><code>Transient local</code>: durable data is maintained by the writer
                 </ul>
               </li>
             </ul>
@@ -524,19 +530,32 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
   enum rmw_qos_durability_policy_t durability;
 } rmw_qos_profile_t;
             </code></pre>
-
-            Predefined QoS profiles: services, sensor data, parameters
-          </section>
-
-          <section>
-            <h3>Integration of existing QoS settings</h3>
             <br/>
 
-            <ul>
-              <li>Do not get in the way of existing DDS users</li>
-              <li>All ROS2 DDS settings accept a system default option</li>
-              <li>Use DDS vendor tools to define QoS settings and profiles</li>
-            </ul>
+            <div class="row">
+              <div class="col-md-4">
+                <ul style="list-style-type: none; padding-left: 0;">
+                  <li><b>Predefined profiles</b>
+                    <ul>
+                      <li>sensor data</li>
+                      <li>services</li>
+                      <li>parameters</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-8">
+                <ul style="list-style-type: none; margin-left: 0; padding-left: 0;">
+                  <li>&nbsp;
+                    <ul>
+                      <li>every policy has a &ldquo;system default&ldquo; option</li>
+                      <li>optionally use DDS vendor tools<br/>to define QoS settings and profiles</li>
+                      <li>do not get in the way of existing DDS users</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </section>
         </section>
 
