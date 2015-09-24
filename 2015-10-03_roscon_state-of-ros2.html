@@ -441,25 +441,105 @@ private:
           </script>
         </section>
 
-        <section data-markdown data-separator-notes="^Note:">
-          <script type="text/template">
-            ## Quality of Service
+        <section>
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              ## Quality of Service Demo
 
-            `We cannot present the items highlighted in red`
+              Note:
+              Run the following commands:
 
-            - Demo
-              + Subscribe to image stream from a remote machine
-              + Multicast demo with multiple subscribers
-              + Choosing different QoS parameters
-            - Technical background
-              + DDS, UDP and QoS
-              + Proposed QoS profiles and use cases
-              + Link to draft article
-              + `Integration with existing DDS QoS policies`
+              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
 
-            Note:
-            8 minutes for these slide.
-          </script>
+              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 0` publish images captured from the camera and use best effort reliability
+              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+
+              `sudo tc qdisc delete dev lo root netem loss 5%`
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              ## Quality of Service Demo
+
+              Note:
+              Run the following commands:
+
+              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
+
+              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 0` publish images captured from the camera and use best effort reliability
+              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+              - Shell C: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+              - Shell D: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+
+              `sudo tc qdisc delete dev lo root netem loss 5%`
+            </script>
+          </section>
+
+          <section>
+            <h3>DDS brings QoS to ROS for free<h3>
+            <br/>
+
+            <ul>
+              <li>Switch from TCP (ROS1) to UDP (ROS2) adds support for multicast and QoS</li>
+              <li>Frees ROS2 developers from implementing complex QoS logic</li>
+              <li>Industry-proven QoS strategies, extensive DDS documentation and shared knowledge</li>
+              <li>Support unreliable networks, ideal for next generation of robotics: drones, IoT, high latency links, etc.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Fine tuning of QoS settings<h3>
+            <br/>
+
+            <ul>
+              <li>Reliability
+                <ul>
+                  <li>Best effort - samples arrive on time at the expense of losing some</li>
+                  <li>Reliable - all samples must reach the other end</li>
+                </ul>
+              </li>
+              <li>History
+                <ul>
+                  <li>Keep last - only store N samples, configurable with queue depth option</li>
+                  <li>Keep all - store all samples</li>
+                </ul>
+              </li>
+              <li>Durability
+                <ul>
+                  <li>Volatile - no persistence</li>
+                  <li>Transient local - durable data is maintained by the writer
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>QoS profiles</h2>
+
+            <pre><code class="cpp" data-trim>
+typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
+{
+  enum rmw_qos_history_policy_t history;
+  size_t depth;
+  enum rmw_qos_reliability_policy_t reliability;
+  enum rmw_qos_durability_policy_t durability;
+} rmw_qos_profile_t;
+            </code></pre>
+
+            Predefined QoS profiles: services, sensor data, parameters
+          </section>
+
+          <section>
+            <h3>Integration of existing QoS settings</h3>
+            <br/>
+
+            <ul>
+              <li>Do not get in the way of existing DDS users</li>
+              <li>All ROS2 DDS settings accept a system default option</li>
+              <li>Use DDS vendor tools to define QoS settings and profiles</li>
+            </ul>
+          </section>
         </section>
 
         <section>
