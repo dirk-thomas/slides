@@ -108,6 +108,8 @@
 
             Note:
             All following demos build and run on the three platforms.
+
+            End time: 1:00
           </script>
         </section>
 
@@ -120,6 +122,8 @@
               Run the following commands:
               - Shell A: `. ros2_ws/install/setup.bash`, `talker` publishing messages
               - Shell B: `. ros2_ws/install/setup.bash`, `listener` subscribing to messages
+
+              End time: 2:00
             </script>
           </section>
 
@@ -180,6 +184,10 @@
                 <text x="50%" y="300" text-anchor="middle">DDS Interoperability Wire Protocol</text>
               </g>
             </svg>
+
+            <aside class="notes">
+              End time: 3:00
+            </aside>
           </section>
 
           <section data-transition="slide-in fade-out">
@@ -306,8 +314,7 @@ int main(int argc, char * argv[])
             </svg>
 
             <aside class="notes">
-              End time: 10:00
-              Eventually shorter to have more time for the other parts.
+              End time: 4:30
             </aside>
           </section>
 
@@ -357,6 +364,10 @@ int main(int argc, char * argv[])
                 <td>small part of DDS only<br/>aiming for emb. devices</td>
               </tr>
             </table>
+
+            <aside class="notes">
+              End time: 6:30
+            </aside>
           </section>
         </section>
 
@@ -368,11 +379,12 @@ int main(int argc, char * argv[])
 
               `We cannot present the items highlighted in red`
 
-              - Demo
+              - Motivation 1:00
+              - Demo 3:00
                 + The two nodes exchange large data (e.g. images, point clouds)
                 + Change the deployment to run them within the same process
                 + `Two nodes publish / subscribe but with custom non­ROS types`
-              - Technical background
+              - Technical background 6:00
                 + Each component gets compiled into a library
                 + Either link against “default” main
                 + Or load within an existing process
@@ -418,6 +430,7 @@ private:
           </section>
         </section>
 
+<!--
         <section data-markdown data-separator-notes="^Note:">
           <script type="text/template">
             ## Deterministic startup behavior
@@ -437,6 +450,7 @@ private:
             Planned 10 min. but since the content is much less probably only a few minutes.
           </script>
         </section>
+-->
 
         <section>
           <section>
@@ -455,6 +469,10 @@ private:
               <li>Using UDP (instead of TCP) allows multicasting<br/><br/></li>
               <li>Support unreliable networks, e.g. drones, IoT, high latency links</li>
             </ul>
+
+            <aside class="notes">
+              End time: 17:30
+            </aside>
           </section>
 
           <section data-markdown data-separator-notes="^Note:">
@@ -470,6 +488,8 @@ private:
               - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 1` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
+
+              End time 19:30
             </script>
           </section>
 
@@ -486,6 +506,8 @@ private:
               - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
+
+              End time 21:30
             </script>
           </section>
 
@@ -513,6 +535,10 @@ private:
                 </ul>
               </li>
             </ul>
+
+            <aside class="notes">
+              End time: 23:30
+            </aside>
           </section>
 
           <section>
@@ -553,6 +579,10 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 </ul>
               </div>
             </div>
+
+            <aside class="notes">
+              End time: 25:00
+            </aside>
           </section>
         </section>
 
@@ -598,6 +628,10 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 <text x="50%" y="32" text-anchor="middle" stroke="#353535">?</text>
               </g>
             </svg>
+
+            <aside class="notes">
+              End time: 26:00
+            </aside>
           </section>
 
           <section>
@@ -644,6 +678,10 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 <polyline points="510,200 575,200 575,140" marker-end="url(#dynamic_bridge_end-triangle)"/>
               </g>
             </svg>
+
+            <aside class="notes">
+              End time: 26:30
+            </aside>
           </section>
 
           <section data-markdown data-separator-notes="^Note:">
@@ -664,6 +702,9 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               - Show incoming ROS 2 images.
               - Trigger flipping.
               - Show incoming flipped ROS 2 images.
+
+              Note:
+              End time 28:30
             </script>
           </section>
 
@@ -687,7 +728,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               - `Challenge`: all header files must be non-colliding (!)
 
               Note:
-              7 minutes for these slide.
+              End time 30:30
             </script>
           </section>
         </section>
@@ -713,7 +754,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 * C as well as Python API <!-- .element: class="fragment" data-fragment-index="2" -->
 
             Note:
-            2 minutes for this slide
+            End time 32:00
           </script>
         </section>
 
@@ -727,7 +768,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               + upcoming presentation from *Jackie* and *Adolfo*
 
             Note:
-            1 minute for this slide
+            End time 32:30
           </script>
         </section>
 
