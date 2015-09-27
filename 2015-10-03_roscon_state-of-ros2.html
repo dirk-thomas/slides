@@ -44,8 +44,12 @@
         <div class="osrf-signature">
           <svg id="osrf-logo" height="1.8em" width="1.8em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <image id="osrf-logo-image" x="0" y="0" height="100%" width="100%" xlink:href="image/osrf-logo.svg"/>
-            <animateTransform id="osrf-logo-animate" xlink:href="#osrf-logo-image" attributeName="transform" attributeType="XML"
-              type="rotate" from="0 27 27" to="360 27 27" dur="0.7s" begin="indefinite" repeatCount="0" fill="freeze"/>
+            <animateTransform id="osrf-logo-clockwise" xlink:href="#osrf-logo-image" attributeName="transform" attributeType="XML"
+              type="rotate" from="0 27 27" to="360 27 27" dur="0.7s" calcMode="spline" keySplines="0.5 0 0.5 1" keyTimes="0;1" begin="indefinite" repeatCount="0" fill="freeze"/>
+            <animateTransform id="osrf-logo-counterclockwise" xlink:href="#osrf-logo-image" attributeName="transform" attributeType="XML"
+              type="rotate" from="360 27 27" to="0 27 27" dur="0.7s" calcMode="spline" keySplines="0.5 0 0.5 1" keyTimes="0;1" begin="indefinite" repeatCount="0" fill="freeze"/>
+            <animate id="osrf-logo-flash" attributeType="CSS" attributeName="opacity"
+              dur="0.7s" values="1; 0.25; 1" keyTimes="0; 0.25; 1" repeatCount="0" />
           </svg>
           <svg id="osrf-lettering" height="1.4em" width="32%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <image x="0" y="0" height="75%" width="100%" xlink:href="image/osrf-lettering.svg"/>
@@ -806,8 +810,28 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
           { src: 'plugin/notes/notes.js', async: true }
         ]
       });
-      Reveal.addEventListener( 'slidechanged', function( event ) {
-        document.getElementById('osrf-logo-animate').beginElement();
+      var previous_index_h = 0;
+      var previous_index_v = 0;
+      Reveal.addEventListener( 'slidechanged', function(event) {
+        if (event.previousSlide) {
+          if (event.indexh > previous_index_h) {
+            document.getElementById('osrf-logo-clockwise').beginElement();
+          } else if (event.indexh < previous_index_h) {
+            document.getElementById('osrf-logo-counterclockwise').beginElement();
+          } else if (event.indexv > previous_index_v) {
+            document.getElementById('osrf-logo-clockwise').beginElement();
+          } else if (event.indexv < previous_index_v) {
+            document.getElementById('osrf-logo-counterclockwise').beginElement();
+          }
+        }
+        previous_index_h = event.indexh;
+        previous_index_v = event.indexv;
+      });
+      Reveal.addEventListener('fragmentshown', function(event) {
+        document.getElementById('osrf-logo-flash').beginElement();
+      });
+      Reveal.addEventListener('fragmenthidden', function(event) {
+        document.getElementById('osrf-logo-flash').beginElement();
       });
     </script>
   </body>
