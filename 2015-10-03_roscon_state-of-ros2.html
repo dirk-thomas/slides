@@ -125,7 +125,7 @@
               Note:
               Run the following commands:
               - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `talker__rmw_opensplice_cpp` publishing messages
-              - Shell B: `. ros2_ws/install/setup.bash`, `listener` subscribing to messages
+              - Shell B: `. ros2_ws/install/setup.bash`, `listener__rmw_connext_cpp` subscribing to messages
 
               End time: 2:00
             </script>
@@ -488,8 +488,8 @@ private:
 
               `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
 
-              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 1` publish images captured from the camera and use reliable communication
-              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 1` display images from subscriber
+              - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 1` publish images captured from the camera and use reliable communication
+              - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 1` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
 
@@ -506,8 +506,8 @@ private:
 
               `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
 
-              - Shell A: `. ros2_ws/install/setup.bash`, `cam2image -r 0` publish images captured from the camera and use best effort reliability
-              - Shell B: `. ros2_ws/install/setup.bash`, `showimage -r 0` display images from subscriber
+              - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 0` publish images captured from the camera and use best effort reliability
+              - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 0` display images from subscriber
 
               `sudo tc qdisc delete dev lo root netem loss 5%`
 
