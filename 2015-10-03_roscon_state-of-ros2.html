@@ -552,6 +552,7 @@ int main(int argc, char * argv[])
                - This does not avoid any extra copies, but can simplify your code if you are going to copy it anyways.
                - In one special case it can avoid a copy: if this is the only intra process callback.
               Note:
+              - Mention that in the "special" case an inter process subscriber still results in a copy.
             </script>
           </section>
 
