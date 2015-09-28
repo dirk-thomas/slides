@@ -65,6 +65,14 @@
 .reveal .controls div.navigate-down.enabled:hover {
   border-top-color: #7780D6; }
 
+section[data-markdown] > p {
+  text-align: left;
+}
+
+section[data-markdown] > ul {
+  display: block;  /*This is needed to have them float left rather then expand from the middle.*/
+}
+
 /*********************************************
  * PROGRESS BAR
  *********************************************/
