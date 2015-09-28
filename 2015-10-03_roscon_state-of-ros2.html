@@ -409,7 +409,12 @@ int main(int argc, char * argv[])
 
               - Avoids serialization and deserialization.
               - Avoids the network stack (TCP so no userspace packetization).
-              - Avoids some copies.
+              - Avoids copies, though in an unsafe way:
+
+              <p style="font-size: small; margin-left: 50px">From: http://wiki.ros.org/roscpp/Overview/Publishers%20and%20Subscribers#Intraprocess_Publishing</p>
+              <pre>
+              Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intraprocess subscribers. If you want to send another message, you must allocate a new one and send that.
+              </pre>
 
               Note:
 
@@ -425,9 +430,8 @@ int main(int argc, char * argv[])
 
               - Avoids serialization and deserialization.
               - Avoids the network stack and packetizing of data.
-              - Avoid more copies (than ROS 1) by:
-               - Providing `unique_ptr` publish and subscribe APIs.
-               - Providing better handling of type masquerading.
+              - Avoid copies safely by providing `unique_ptr` based APIs.
+              - Avoid copies when publishing and subscribing to user defined types.
 
               Note:
             </script>
@@ -435,9 +439,7 @@ int main(int argc, char * argv[])
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # How to Reduce Copies
-
-              *By tracking ownership, we can avoid copies.*
+              # Hidden Issues in ROS 1
 
               Consider the case of publishing a `shared_ptr` of a message:
 
@@ -445,24 +447,31 @@ int main(int argc, char * argv[])
               std::shared_ptr<std_msgs::msg::String> msg(new std_msgs::msg::String());
 
               msg->data = "testing";
-              publisher->publish(msg);  // This is non-blocking, the message goes into a queue.
+              publisher->publish(msg);
               // The user still has ownership at this point, could do something like this:
               msg->data = "testing2";
               ```
 
-              So which value is published if publishing is not immediate?
+              Will the subscribing callbacks to get `"testing"` or `"testing2"`?
 
-               - `"testing"` is, because the middleware makes a copy.
+               - They will get `"testing"` because `publish(...)` actually calls the intra process callbacks directly.
+               - Unless they store it and check it later, in which case it might be `"testing2"`.
 
-              It is the same case for `const &`, i.e. the middleware makes a copy.
+              What happens if the subscriber callbacks run long?
 
               Note:
+              - If the callbacks are long then publish becomes unexpected blocking. This differs from the behavior in inter process publish.
             </script>
           </section>
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # Understanding unique_ptr
+              # Safely do Intra Process
+
+              These issues in the current approach cause large differences in intra process and inter process behavior.
+              How do we solve this?
+
+              *By tracking ownership with ownership semantics, i.e. `unique_ptr`*
 
               Now consider how a `unique_ptr` works:
 
@@ -483,7 +492,7 @@ int main(int argc, char * argv[])
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # Applying unique_ptr to Publish
+              # Applying unique_ptr to Publish in ROS 2
 
               If applied to publishing:
 
@@ -497,7 +506,7 @@ int main(int argc, char * argv[])
               msg->data = "testing2";  // <-- access nullptr, will cause segmentation fault.
               ```
 
-              The benefit is that the middleware did not need to make a copy.
+              The benefit is that the middleware did not need to make a copy, but the user is not able to change the data they relinquished.
                - But it is not always the optimal solution, e.g. if you are reusing messages intentionally.
               Note:
             </script>
