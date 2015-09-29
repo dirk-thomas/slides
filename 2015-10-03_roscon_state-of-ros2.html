@@ -95,7 +95,7 @@
             </div>
             <div class="col-md-4" style="height: 9em;">
               <img src="image/linux-windows-osx.png" class="center-block" height="60%" alt=""/>
-              <small>Cross platform<br/>
+              <small>Cross-platform<br/>
               support</small>
             </div>
           </div>
@@ -146,7 +146,7 @@
               <marker id="publish-subscribe_end-triangle-red" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#c7254e"/>
               </marker>
-              <line x1="50%" y1="0" x2="50%" y2="100%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
+              <line x1="50%" y1="0" x2="50%" y2="70%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
               <g title="Publisher">
                 <rect x="10" y="10" width="330" height="40"/>
                 <text x="175" y="40" text-anchor="middle">talker</text>
@@ -342,35 +342,35 @@ int main(int argc, char * argv[])
                 <td><img src="image/rti.png" width="60" style="margin: 0.3em 0; vertical-align: top;" alt=""/></td>
                 <td>RTI<br/>Connext</td>
                 <td>commercial,<br/>research</td>
-                <td><span class="glyphicon glyphicon-ok">&nbsp;</span></td>
+                <td align="center"><span class="glyphicon glyphicon-ok"></span></td>
                 <td>stat. &amp; dyn. impl.</td>
               </tr>
               <tr>
                 <td><img src="image/prismtech.png" width="60" style="margin: 0.3em 0; vertical-align: top;" alt=""/></td>
                 <td>PrismTech<br/>OpenSplice</td>
                 <td>commercial,<br/>LGPL</td>
-                <td><span class="glyphicon glyphicon-ok">&nbsp;</span></td>
+                <td align="center"><span class="glyphicon glyphicon-ok"></span></td>
                 <td>only version 6.4 is LGPL</td>
               </tr>
               <tr>
                 <td><img src="image/twinoaks.png" width="60" style="margin: 0.3em 0; vertical-align: top;" alt=""/></td>
                 <td>TwinOaks<br/>CoreDX</td>
                 <td>commercial</td>
-                <td><span class="glyphicon glyphicon-minus">&nbsp;</span></td>
+                <td align="center"><span class="glyphicon glyphicon-minus"></span></td>
                 <td></td>
               </tr>
               <tr>
                 <td><img src="image/eprosima.png" width="60" style="margin: 0.3em 0; vertical-align: top;" alt=""/></td>
                 <td>eProsima<br/>FastRTPS</td>
                 <td>LGPL</td>
-                <td><span class="glyphicon glyphicon-ok">&nbsp;</span>*</td>
+                <td align="center"><span class="glyphicon glyphicon-ok"></span></td>
                 <td>no support for<br/>fragmentation yet</td>
               </tr>
               <tr>
                 <td><img src="image/osrf-logo.svg" width="60" style="margin: 0.3em 0; vertical-align: top;" alt=""/></td>
                 <td>OSRF<br/>FreeRTPS</td>
                 <td>Apache 2</td>
-                <td><b style="font-size: 1.5em">~</b></td>
+                <td align="center"><b style="font-size: 0.8em">partial</b></td>
                 <td>small part of DDS only<br/>aiming for emb. devices</td>
               </tr>
             </table>
@@ -388,8 +388,8 @@ int main(int argc, char * argv[])
 
               Why support transparent intra-process communications?
               - Provide performance improvements for:
-                - Nodes which communicate to itself (loop back within a node).
-                - Nodes which communicate with other nodes in the same process.
+                - Node which communicates to itself (loop back within a node).
+                - Node which communicates with other nodes in the same process.
               - It achieves performance improvements by:
                 - Avoiding serialization and deserialization of messages.
                 - Avoiding unnecessary copying.
@@ -405,7 +405,7 @@ int main(int argc, char * argv[])
               # ROS 1
               ## Already Does a Pretty Good Job
 
-              Intra process communication:
+              Intra-process communication:
 
               - Avoids serialization and deserialization.
               - Avoids the network stack (TCP so no userspace packetization).
@@ -413,7 +413,7 @@ int main(int argc, char * argv[])
 
               <p style="font-size: small; margin-left: 50px">From: http://wiki.ros.org/roscpp/Overview/Publishers%20and%20Subscribers#Intraprocess_Publishing</p>
               <pre>
-              Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intraprocess subscribers. If you want to send another message, you must allocate a new one and send that.
+              Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intra-process subscribers. If you want to send another message, you must allocate a new one and send that.
               </pre>
 
               Note:
@@ -424,14 +424,14 @@ int main(int argc, char * argv[])
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
               # ROS 2
-              ## Will Make Some Improvements
+              ## Will Make Improvements
 
-              Intra process communication:
+              Intra-process communication:
 
               - Avoids serialization and deserialization.
               - Avoids the network stack and packetizing of data.
               - Avoid copies safely by providing `unique_ptr` based APIs.
-              - Avoid copies when publishing and subscribing to user defined types.
+              - Avoid copies when publishing and subscribing to user-defined types.
 
               Note:
             </script>
@@ -452,9 +452,9 @@ int main(int argc, char * argv[])
               msg->data = "testing2";
               ```
 
-              Will the subscribing callbacks to get `"testing"` or `"testing2"`?
+              Will the subscribing callbacks get `"testing"` or `"testing2"`?
 
-               - They will get `"testing"` because `publish(...)` actually calls the intra process callbacks directly.
+               - They will get `"testing"` because `publish(...)` actually calls the intra-process callbacks directly.
                - Unless they store it and check it later, in which case it might be `"testing2"`.
 
               What happens if the subscriber callbacks run long?
@@ -466,9 +466,9 @@ int main(int argc, char * argv[])
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # Safely do Intra Process
+              # Safely do Intra-Process
 
-              These issues in the current approach cause large differences in intra process and inter process behavior.
+              These issues in the current approach cause large differences in intra-process and inter process behavior.
               How do we solve this?
 
               *By tracking ownership with ownership semantics, i.e. `unique_ptr`*
@@ -528,7 +528,7 @@ int main(int argc, char * argv[])
               }
               ```
 
-              The middleware does not give the user ownership becuase it may need to give the same shared message to another callback.
+              The middleware does not give the user ownership because it may need to give the same shared message to another callback.
               - Result: the user needs to copy it explicitly in order to modify it.
               Note:
             </script>
@@ -550,7 +550,7 @@ int main(int argc, char * argv[])
 
               The middleware will make a copy if there are other callbacks, so:
                - This does not avoid any extra copies, but can simplify your code if you are going to copy it anyways.
-               - In one special case it can avoid a copy: if this is the only intra process callback.
+               - In one special case it can avoid a copy: if this is the only intra-process callback.
               Note:
               - Mention that in the "special" case an inter process subscriber still results in a copy.
             </script>
@@ -656,7 +656,7 @@ int main(int argc, char * argv[])
               # About Type Masquerading
 
               What I mean by Type Masquerading:
-              - Publishing and Subscribing using a user defined type, which is mapped to a ROS `.msg` type.
+              - Publishing and Subscribing using a user-defined type, which is mapped to a ROS `.msg` type.
 
               This is already supported in ROS 1.
               Here is what it should look like in ROS 2 (psuedocode):
@@ -727,8 +727,8 @@ int main(int argc, char * argv[])
             <script type="text/template">
               # What Next?
 
-              - Make the intermediate intra process storage smarter (intelligently convert when beneficial).
-              - Consider alternative implementations of the intra process system (internally).
+              - Make the intermediate intra-process storage smarter (intelligently convert when beneficial).
+              - Consider alternative implementations of the intra-process system (internally).
               - Allow better control of memory allocation and test for real-time safety.
               - Implement Type Masquerading.
               - Building and Running a Node:
@@ -1026,7 +1026,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 + in ROS 2 using the `ament resource index` [](https://github.com/ament/ament_cmake/blob/master/ament_cmake_core/doc/resource_index.md)<!-- .element: class="glyphicon glyphicon-file" --> (no crawling &#128526;)
               - Generate mappings between ROS 1 types and ROS 2 types
                 + automatic rules
-                + optionally custom rules (specified in a `.yaml` file)
+                + optionally: custom rules (specified in a `.yaml` file)
                 + &forall; type pairs
                   * register at a factory
                   * generate conversion functions (ROS 1 &harr; ROS 2)
@@ -1047,9 +1047,8 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
 
             - First release (`Alpha 1`) was on Sep. 1st
               + https://github.com/ros2/ros2/wiki/Alpha1-Overview
-            - Roadmap <!-- .element: class="fragment" data-fragment-index="1" -->
-              + Upcoming features group and ordered <!-- .element: class="fragment" data-fragment-index="1" -->
-                https://github.com/ros2/ros2/wiki/Roadmap <!-- .element: class="fragment" data-fragment-index="1" -->
+            - Upcoming features, grouped and ordered <!-- .element: class="fragment" data-fragment-index="1" -->
+              + https://github.com/ros2/ros2/wiki/Roadmap <!-- .element: class="fragment" data-fragment-index="1" -->
             - Current work items for <!-- .element: class="fragment" data-fragment-index="2" -->
               `Alpha 2` <!-- .element: class="fragment" data-fragment-index="2" -->
               + Component life cycle <!-- .element: class="fragment" data-fragment-index="2" -->
