@@ -384,60 +384,359 @@ int main(int argc, char * argv[])
         <section>
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              ## Unified node / nodelet interface
-              ### Transparent intra process communication
+              # Transparent Intra-Process Communications
 
-              `We cannot present the items highlighted in red`
-
-              - Motivation 1:00
-              - Demo 3:00
-                + The two nodes exchange large data (e.g. images, point clouds)
-                + Change the deployment to run them within the same process
-                + `Two nodes publish / subscribe but with custom non­ROS types`
-              - Technical background 6:00
-                + Each component gets compiled into a library
-                + Either link against “default” main
-                + Or load within an existing process
-                  * Efficiently locate plugins using the ament resource index
-                  * Intra process communication using shared pointers, more details
-                  * `Mention type masquerading: no conversion within the process, implicit conversion when communicated outside`
+              Why support transparent intra-process communications?
+              - Provide performance improvements for:
+                - Nodes which communicate to itself (loop back within a node).
+                - Nodes which communicate with other nodes in the same process.
+              - It achieves performance improvements by:
+                - Avoiding serialization and deserialization of messages.
+                - Avoiding unnecessary copying.
+                - Avoiding the network stack and packetization.
 
               Note:
               10 minutes for these slide.
             </script>
           </section>
 
-          <section>
-            <h2>Subclass from Component</h2>
-            <h3>instead of writing your own main()</h3>
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # ROS 1
+              ## Already Does a Pretty Good Job
 
-            <pre><code class="cpp" data-trim>
-class Listener : public Node
-{
-public:
-  Listener() : Node("listener")
-  {
-    sub_ = this->create_subscription&lt;std_msgs::msg::String>(
-      "chatter", rmw_qos_profile_default, callback);
-  }
-  void callback(std_msgs::msg::String::ConstSharedPtr msg)
-  {
-    printf("I heard: [%s]\n", msg->data.c_str());
-  }
-private:
-  Subscriber::SharedPtr sub_;
-}
-            </code></pre>
+              Intra process communication:
 
-            <ul>
-              <li>Compile into a library and
-                <ul>
-                  <li>either link it with a &ldquo;default&rdquo; <code>main()</code> function</li>
-                  <li>or load it dynamically into another process<br/>(like a nodelet manager in ROS 1)</li>
-                </ul>
-              </li>
-            </ul>
+              - Avoids serialization and deserialization.
+              - Avoids the network stack (TCP so no userspace packetization).
+              - Avoids copies, though in an unsafe way:
+
+              <p style="font-size: small; margin-left: 50px">From: http://wiki.ros.org/roscpp/Overview/Publishers%20and%20Subscribers#Intraprocess_Publishing</p>
+              <pre>
+              Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intraprocess subscribers. If you want to send another message, you must allocate a new one and send that.
+              </pre>
+
+              Note:
+
+            </script>
           </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # ROS 2
+              ## Will Make Some Improvements
+
+              Intra process communication:
+
+              - Avoids serialization and deserialization.
+              - Avoids the network stack and packetizing of data.
+              - Avoid copies safely by providing `unique_ptr` based APIs.
+              - Avoid copies when publishing and subscribing to user defined types.
+
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Hidden Issues in ROS 1
+
+              Consider the case of publishing a `shared_ptr` of a message:
+
+              ```c++
+              std::shared_ptr<std_msgs::msg::String> msg(new std_msgs::msg::String());
+
+              msg->data = "testing";
+              publisher->publish(msg);
+              // The user still has ownership at this point, could do something like this:
+              msg->data = "testing2";
+              ```
+
+              Will the subscribing callbacks to get `"testing"` or `"testing2"`?
+
+               - They will get `"testing"` because `publish(...)` actually calls the intra process callbacks directly.
+               - Unless they store it and check it later, in which case it might be `"testing2"`.
+
+              What happens if the subscriber callbacks run long?
+
+              Note:
+              - If the callbacks are long then publish becomes unexpected blocking. This differs from the behavior in inter process publish.
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Safely do Intra Process
+
+              These issues in the current approach cause large differences in intra process and inter process behavior.
+              How do we solve this?
+
+              *By tracking ownership with ownership semantics, i.e. `unique_ptr`*
+
+              Now consider how a `unique_ptr` works:
+
+              ```c++
+              std::unique_ptr<A> a, b;
+              a.reset(new A());
+              // a is valid.
+              // b is a nullptr.
+              b = a;  // Ownership of the pointer returned by `new A()` transfered.
+              // a is now nullptr.
+              // b is now valid.
+              ```
+
+              So when assigning a `unique_ptr` the ownership is traded between them.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Applying unique_ptr to Publish in ROS 2
+
+              If applied to publishing:
+
+              ```c++
+              std::unique_ptr<std_msgs::msg::String> msg(new std_msgs::msg::String());
+
+              msg->data = "testing";
+              publisher->publish(msg);  // This is non-blocking, the message goes into a queue.
+              // The user no longer has access to the message created above.
+              // Instead the middleware now owns it, and this is no longer valid:
+              msg->data = "testing2";  // <-- access nullptr, will cause segmentation fault.
+              ```
+
+              The benefit is that the middleware did not need to make a copy, but the user is not able to change the data they relinquished.
+               - But it is not always the optimal solution, e.g. if you are reusing messages intentionally.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # The Subscribing Side
+
+              What about the subscribing side of the problem? A typical example first:
+
+              ```c++
+              void callback(std_msgs::msg::String::ConstSharedPtr msg)
+              {
+                // msg->data = "new value"; This is illegal; the user doesn't own it.
+                std_msgs::msg::String msg_copy(*msg);  // Must make a copy that the user owns.
+                msg_copy = "new value";
+                outgoing_publisher->publish(msg_copy);
+              }
+              ```
+
+              The middleware does not give the user ownership becuase it may need to give the same shared message to another callback.
+              - Result: the user needs to copy it explicitly in order to modify it.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Using unique_ptr on the Subscribe Side
+
+              If you use a `unique_ptr` in the callback signature, it looks like this:
+
+              ```c++
+              void callback(std_msgs::msg::String::UnqiuePtr msg)
+              {
+                msg->data = "new value";  // Edit directly; middleware relinquished ownership.
+                outgoing_publisher->publish(msg);
+              }
+              ```
+
+              The middleware will make a copy if there are other callbacks, so:
+               - This does not avoid any extra copies, but can simplify your code if you are going to copy it anyways.
+               - In one special case it can avoid a copy: if this is the only intra process callback.
+              Note:
+              - Mention that in the "special" case an inter process subscriber still results in a copy.
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Demo Cyclic Pipeline
+              Note:
+              Run the following command:
+              - `ros2_ws/install/bin/cyclic_pipeline`
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Demo Cyclic Pipeline
+
+              <p style="font-size: small;">Full text: https://github.com/ros2/demos/blob/release-alpha1/intra_process_demo/src/cyclic_pipeline/cyclic_pipeline.cpp</p>
+              ```c++
+              struct IncrementerPipe : public rclcpp::Node
+              {
+                IncrementerPipe(const std::string & name, const std::string & in, const std::string & out)
+                // ...
+                    [this](std_msgs::msg::Int32::UniquePtr & msg) {
+                      printf("Received message with value:         %d, and address: %p\n",
+                        msg->data, msg.get());
+                      printf("  sleeping for 1 second...\n");
+                      if (!rclcpp::sleep_for(1_s)) {
+                        return;  // Return if the sleep failed (e.g. on ctrl-c).
+                      }
+                      printf("  done.\n");
+                      msg->data++;  // Increment the message's data.
+                      printf("Incrementing and sending with value: %d, and address: %p\n",
+                        msg->data, msg.get());
+                      this->pub->publish(msg);  // Send the message along to the output topic.
+                    });
+                }
+                // ..
+              };
+              ```
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Demo Cyclic Pipeline
+
+              Running two instances:
+
+              ```c++
+              int main(int argc, char * argv[])
+              {
+                rclcpp::init(argc, argv);
+                rclcpp::executors::SingleThreadedExecutor executor;
+
+                auto pipe1 = std::make_shared<IncrementerPipe>("pipe1", "topic1", "topic2");
+                auto pipe2 = std::make_shared<IncrementerPipe>("pipe2", "topic2", "topic1");
+                // ..
+                // Publish the first message (kicking off the cycle).
+                std::unique_ptr<std_msgs::msg::Int32> msg(new std_msgs::msg::Int32());
+                msg->data = 42;
+                printf("Published first message with value:  %d, and address: %p\n",
+                  msg->data, msg.get());
+                pipe1->pub->publish(msg);
+
+                executor.add_node(pipe1);
+                executor.add_node(pipe2);
+                executor.spin();
+                return 0;
+              }
+              ```
+
+              <p style="font-size: small;">See https://github.com/ros2/ros2/wiki/Intra-Process-Communication#the-image-pipeline-demo</p>
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Using unique_ptr
+
+              So what can we say about these new ownership semantics:
+
+              - Can help avoid copies on publish.
+              - Can help avoid copies in rare cases in callbacks.
+              - Can be used to create efficient pipelines, i.e. chains of 1 to 1 pub/sub.
+              - Cannot rely on the published pointer to be received by callback.
+
+              Domains where this matters:
+
+              - Using pub/sub within a high performance perception algorithm.
+               - In order to get optional introspection and modularity.
+              - Systems where every `memcpy` costs battery life or latency.
+               - For example in cell phones and in low latency systems.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # About Type Masquerading
+
+              What I mean by Type Masquerading:
+              - Publishing and Subscribing using a user defined type, which is mapped to a ROS `.msg` type.
+
+              This is already supported in ROS 1.
+              Here is what it should look like in ROS 2 (psuedocode):
+
+              ```c++
+              struct TypeMasquerade<std_msgs::msg::String, std::string>
+              {
+                void to_ros(const std::string & in, std_msgs::msg::String & out) {out->data = in;}
+                void from_ros(std_msgs::msg::String & in, std::string & out) {out = in->data;}
+                // ... could also define serialization, move semantics, or other meta data.
+              };
+
+              void callback(std::unique_ptr<std::string> msg) {printf("%s\n", msg->c_str());}
+
+              publisher->publish(std::unique_ptr<std::string>(new std::string("Hello World")));
+              ```
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Incrementally Better
+
+              In ROS 1:
+              - Published `std::string` is converted to `std_msgs::msg::String`.
+              - Passed around internally as `std_msgs::msg::String`.
+              - Converted to `std::string` again before passing to the callback.
+              - Conversions done by serializing and deserializing (not optimal).
+
+              In ROS 2:
+              - Published `std::string` is stored internally without conversion.
+              - Passed around as `std::string`.
+              - Converted lazily just before a callback if a different type is needed.
+              - If both published and subscribed type is `std::string`, may result in zero copy/zero conversion.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # The Next Demo
+
+              ```c++
+              #include <opencv_ros2/type_masquerading.hpp>  // Or something similar.
+
+              int main(...)
+              {
+                // ...
+                  std::unique_ptr<cv::Mat> mat(new cv::Mat());
+                  if (cv_capture_obj.read(*mat)) publisher->publish(mat);
+                }
+              }
+
+              void callback(std::unique_ptr<cv::Mat> image) {/* image's address matches published address */};
+              ```
+
+              With this, developing your algorithm in ROS might gain you:
+              - The ability to use your own types with little overhead.
+              - The ability to distribute parts of the algorithm across multiple processes for fault isolation during development.
+              - The ability to easily modularize and reused parts of the algorithm.
+              - Optional remote introspection with minimal overhead when not in use.
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # What Next?
+
+              - Make the intermediate intra process storage smarter (intelligently convert when beneficial).
+              - Consider alternative implementations of the intra process system (internally).
+              - Allow better control of memory allocation and test for real-time safety.
+              - Implement Type Masquerading.
+              - Building and Running a Node:
+               - Remove the boilerplate, make it easy to write once then choose stand-alone versus shared process later.
+              Note:
+            </script>
+          </section>
+
         </section>
 
 <!--
