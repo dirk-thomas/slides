@@ -194,6 +194,10 @@
             </svg>
 
             <aside class="notes">
+              <ul>
+                <li>No need to run a central <code>roscore</code></li>
+                <li>RTPS protocol</li>
+              </ul>
               End time: 3:00
             </aside>
           </section>
@@ -322,7 +326,11 @@ int main(int argc, char * argv[])
             </svg>
 
             <aside class="notes">
-              <code>std</code> instead of <code>boost</code>
+              <ul>
+                <li><code>std</code> instead of <code>boost</code></li>
+                <li><code>rmw_qos_profile_default</code> mentioned later</li>
+                <li><code>spin</code> is the simplest threading model</li>
+              </ul>
               <br/>
               End time: 4:30
             </aside>
@@ -541,7 +549,7 @@ int main(int argc, char * argv[])
               If you use a `unique_ptr` in the callback signature, it looks like this:
 
               ```c++
-              void callback(std_msgs::msg::String::UnqiuePtr msg)
+              void callback(std_msgs::msg::String::UniquePtr msg)
               {
                 msg->data = "new value";  // Edit directly; middleware relinquished ownership.
                 outgoing_publisher->publish(msg);
