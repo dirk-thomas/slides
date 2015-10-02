@@ -842,12 +842,12 @@ int main(int argc, char * argv[])
               Note:
               Run the following commands:
 
-              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
+              `sudo tc qdisc add dev lo root netem loss 25%` simulate lossy network.
 
               - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 1` publish images captured from the camera and use reliable communication
               - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 1` display images from subscriber
 
-              `sudo tc qdisc delete dev lo root netem loss 5%`
+              `sudo tc qdisc delete dev lo root netem loss 25%`
 
               End time 23:30
             </script>
@@ -860,12 +860,12 @@ int main(int argc, char * argv[])
               Note:
               Run the following commands:
 
-              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
+              `sudo tc qdisc add dev lo root netem loss 25%` simulate lossy network.
 
               - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 0` publish images captured from the camera and use best effort reliability
               - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 0` display images from subscriber
 
-              `sudo tc qdisc delete dev lo root netem loss 5%`
+              `sudo tc qdisc delete dev lo root netem loss 25%`
 
               End time 25:30
             </script>
