@@ -389,6 +389,17 @@ int main(int argc, char * argv[])
           </section>
         </section>
 
+        <section data-animation="switch-speaker-william-animate">
+          <svg height="16em" width="16em" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g transform="translate(80 105)">
+              <text text-anchor="middle" transform="rotate(-60)" style="fill: #44497a; stroke: #44497a;">William</text>
+            </g>
+            <image id="switch-speaker-william-logo" x="0" y="0" height="100%" width="100%" xlink:href="image/osrf-logo.svg"/>
+            <animateTransform id="switch-speaker-william-animate" xlink:href="#switch-speaker-william-logo" attributeName="transform" attributeType="XML"
+              type="rotate" from="0 150 150" to="360 150 150" dur="5s" calcMode="spline" keySplines="0.5 0 0.5 1" keyTimes="0;1" begin="indefinite" repeatCount="0" fill="freeze"/>
+          </svg>
+        </section>
+
         <section>
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
@@ -769,6 +780,17 @@ int main(int argc, char * argv[])
         </section>
 -->
 
+        <section data-animation="switch-speaker-esteve-animate">
+          <svg height="16em" width="16em" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g transform="translate(80 105)">
+              <text text-anchor="middle" transform="rotate(-60)" style="fill: #44497a; stroke: #44497a;">Esteve</text>
+            </g>
+            <image id="switch-speaker-esteve-logo" x="0" y="0" height="100%" width="100%" xlink:href="image/osrf-logo.svg"/>
+            <animateTransform id="switch-speaker-esteve-animate" xlink:href="#switch-speaker-esteve-logo" attributeName="transform" attributeType="XML"
+              type="rotate" from="0 150 150" to="360 150 150" dur="5s" calcMode="spline" keySplines="0.5 0 0.5 1" keyTimes="0;1" begin="indefinite" repeatCount="0" fill="freeze"/>
+          </svg>
+        </section>
+
         <section>
           <section>
             <h2>DDS provides QoS &ldquo;for free&rdquo;</h2>
@@ -901,6 +923,17 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               End time: 25:00
             </aside>
           </section>
+        </section>
+
+        <section data-animation="switch-speaker-dirk-animate">
+          <svg height="16em" width="16em" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <g transform="translate(80 105)">
+              <text text-anchor="middle" transform="rotate(-60)" style="fill: #44497a; stroke: #44497a;">Dirk</text>
+            </g>
+            <image id="switch-speaker-dirk-logo" x="0" y="0" height="100%" width="100%" xlink:href="image/osrf-logo.svg"/>
+            <animateTransform id="switch-speaker-dirk-animate" xlink:href="#switch-speaker-dirk-logo" attributeName="transform" attributeType="XML"
+              type="rotate" from="0 150 150" to="360 150 150" dur="5s" calcMode="spline" keySplines="0.5 0 0.5 1" keyTimes="0;1" begin="indefinite" repeatCount="0" fill="freeze"/>
+          </svg>
         </section>
 
         <section>
@@ -1134,6 +1167,10 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
             document.getElementById('osrf-logo-clockwise').beginElement();
           } else if (event.indexv < previous_index_v) {
             document.getElementById('osrf-logo-counterclockwise').beginElement();
+          }
+          var animation = Reveal.getCurrentSlide().getAttribute('data-animation');
+          if (animation) {
+            document.getElementById(animation).beginElement();
           }
         }
         previous_index_h = event.indexh;
