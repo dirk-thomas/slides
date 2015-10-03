@@ -793,6 +793,46 @@ int main(int argc, char * argv[])
 
         <section>
           <section>
+            <h2>The networking spectrum</h2>
+            <img src="image/networking-spectrum.svg" alt=""/>
+
+            <aside class="notes">
+              End time: 17:30
+            </aside>
+          </section>
+
+          <section>
+            <h2>Some of the QoS settings</h2>
+            <br/>
+
+            <ul style="list-style-type: none;">
+              <li>ROS1: <b>UDPROS/TCPROS</b> ROS2: <b>Reliability</b>
+                <ul>
+                  <li><code>Best effort</code>: messages arrive &ldquo;on time&ldquo;<br/> at the expense of losing some</li>
+                  <li><code>Reliable</code>: all messages must reach the other end</li>
+                </ul>
+              </li>
+              <li>ROS1: <b>Queueing</b> ROS2: <b>History</b>
+                <ul>
+                  <li><code>Keep last</code>: only store <i>N</i> messages,<br/>configurable with queue depth option</li>
+                  <li><code>Keep all</code>: store all messages</li>
+                </ul>
+              </li>
+              <li>ROS1: <b>Latching</b> ROS2: <b>Durability</b>
+                <ul>
+                  <li><code>Volatile</code>: no persistence</li>
+                  <li><code>Transient local</code>: durable data is maintained by the writer
+                </ul>
+              </li>
+              <li>Much richer spectrum of QoS capabilities with ROS2</li>
+            </ul>
+
+            <aside class="notes">
+              End time: 19:30
+            </aside>
+          </section>
+
+          <section>
             <h2>DDS provides QoS &ldquo;for free&rdquo;</h2>
             <br/>
 
@@ -805,14 +845,17 @@ int main(int argc, char * argv[])
                 </ul>
                 <br/>
               </li>
-              <li>Using UDP (instead of TCP) allows multicasting<br/><br/></li>
+              <li>Using UDP (instead of TCP) allows multicasting
+                <ul><li>Publisher won't have to transmit extra copies of a message to every subscriber</li></ul>
+              </li><br/>
               <li>Support unreliable networks, e.g. drones, IoT, high latency links</li>
             </ul>
 
             <aside class="notes">
-              End time: 17:30
+              End time: 21:30
             </aside>
           </section>
+
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
@@ -821,14 +864,14 @@ int main(int argc, char * argv[])
               Note:
               Run the following commands:
 
-              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
+              `sudo tc qdisc add dev lo root netem loss 25%` simulate lossy network.
 
               - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 1` publish images captured from the camera and use reliable communication
               - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 1` display images from subscriber
 
-              `sudo tc qdisc delete dev lo root netem loss 5%`
+              `sudo tc qdisc delete dev lo root netem loss 25%`
 
-              End time 19:30
+              End time 23:30
             </script>
           </section>
 
@@ -839,45 +882,15 @@ int main(int argc, char * argv[])
               Note:
               Run the following commands:
 
-              `sudo tc qdisc add dev lo root netem loss 5%` simulate lossy network.
+              `sudo tc qdisc add dev lo root netem loss 25%` simulate lossy network.
 
               - Shell A: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `cam2image__rmw_opensplice_cpp -r 0` publish images captured from the camera and use best effort reliability
               - Shell B: `. ros2_ws/install/setup.bash`, `export OSPL_VERBOSITY=3`, `showimage__rmw_opensplice_cpp -r 0` display images from subscriber
 
-              `sudo tc qdisc delete dev lo root netem loss 5%`
+              `sudo tc qdisc delete dev lo root netem loss 25%`
 
-              End time 21:30
+              End time 25:30
             </script>
-          </section>
-
-          <section>
-            <h2>Some of the QoS settings</h2>
-            <br/>
-
-            <ul style="list-style-type: none;">
-              <li><b>Reliability</b>
-                <ul>
-                  <li><code>Best effort</code>: samples arrive &ldquo;on time&ldquo;<br/> at the expense of losing some</li>
-                  <li><code>Reliable</code>: all samples must reach the other end</li>
-                </ul>
-              </li>
-              <li><b>History</b>
-                <ul>
-                  <li><code>Keep last</code>: only store <i>N</i> samples,<br/>configurable with queue depth option</li>
-                  <li><code>Keep all</code>: store all samples</li>
-                </ul>
-              </li>
-              <li><b>Durability</b>
-                <ul>
-                  <li><code>Volatile</code>: no persistence</li>
-                  <li><code>Transient local</code>: durable data is maintained by the writer
-                </ul>
-              </li>
-            </ul>
-
-            <aside class="notes">
-              End time: 23:30
-            </aside>
           </section>
 
           <section>
@@ -908,11 +921,11 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               </div>
               <div class="col-md-8">
                 <ul style="list-style-type: none; margin-left: 0; padding-left: 0;">
-                  <li>&nbsp;
+                  <li><b>Integration with existing DDS deployments</b>
                     <ul>
                       <li>every policy has a &ldquo;system default&ldquo; option</li>
                       <li>optionally use DDS vendor tools<br/>to define QoS settings and profiles</li>
-                      <li>do not get in the way of existing DDS users</li>
+                      <li>do not disrupt existing DDS deployments</li>
                     </ul>
                   </li>
                 </ul>
@@ -920,7 +933,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
             </div>
 
             <aside class="notes">
-              End time: 25:00
+              End time: 27:00
             </aside>
           </section>
         </section>
@@ -980,7 +993,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
             </svg>
 
             <aside class="notes">
-              End time: 26:00
+              End time: 28:00
             </aside>
           </section>
 
@@ -1030,7 +1043,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
             </svg>
 
             <aside class="notes">
-              End time: 27:30
+              End time: 29:30
             </aside>
           </section>
 
@@ -1053,7 +1066,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               - Trigger flipping.
               - Show incoming flipped ROS 2 images.
 
-              End time 29:15
+              End time 31:15
             </script>
           </section>
 
@@ -1078,7 +1091,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               - `Challenge`: all header files must be non-colliding (!)
 
               Note:
-              End time 30:45
+              End time 32:45
             </script>
           </section>
         </section>
@@ -1103,7 +1116,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
                 * C as well as Python API <!-- .element: class="fragment" data-fragment-index="2" -->
 
             Note:
-            End time 32:00
+            End time 34:00
           </script>
         </section>
 
@@ -1117,7 +1130,7 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
               + upcoming presentation from *Jackie* and *Adolfo*
 
             Note:
-            End time 32:30
+            End time 34:30
           </script>
         </section>
 
