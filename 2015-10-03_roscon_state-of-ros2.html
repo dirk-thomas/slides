@@ -406,17 +406,94 @@ int main(int argc, char * argv[])
               # Transparent Intra-Process Communications
 
               Why support transparent intra-process communications?
-              - Provide performance improvements for:
-                - Node which communicates to itself (loop back within a node).
-                - Node which communicates with other nodes in the same process.
-              - It achieves performance improvements by:
-                - Avoiding serialization and deserialization of messages.
-                - Avoiding unnecessary copying.
-                - Avoiding the network stack and packetization.
+              - Provide performance improvements for Nodes which:
+                - communicate to themselves (pub/sub loop back).
+                - communicate with other nodes in the same process.
+
+              Related, but previously covered topics:
+              - ROS 2 Node API will be capable of handling multiple nodes in a single process.
 
               Note:
               10 minutes for these slide.
             </script>
+          </section>
+
+          <section>
+            <h2>Inter Process Publish / Subscribe</h2>
+            <br/>
+            <br/>
+            <svg id="publish-subscribe" width="860" height="330">
+              <marker id="publish-subscribe_end-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z"/>
+              </marker>
+              <marker id="publish-subscribe_end-triangle-red" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#c7254e"/>
+              </marker>
+              <line x1="50%" y1="0" x2="50%" y2="50%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
+              <g title="Publisher">
+                <rect x="10" y="10" width="330" height="40"/>
+                <text x="175" y="40" text-anchor="middle">publish</text>
+              </g>
+              <g title="Subscriber">
+                <rect x="520" y="10" width="330" height="40"/>
+                <text x="685" y="40" text-anchor="middle">subscribe</text>
+              </g>
+              <g title="Serialize">
+                <rect x="10" y="60" width="330" height="40"/>
+                <text x="175" y="90" text-anchor="middle">Serialize</text>
+              </g>
+              <g title="Network Stack">
+                <rect x="10" y="110" width="330" height="40"/>
+                <text x="175" y="140" text-anchor="middle">Network Stack</text>
+              </g>
+              <g title="network">
+                <polyline points="260,150 260,200 600,200 600,150" marker-end="url(#publish-subscribe_end-triangle)"/>
+                <text x="50%" y="250" text-anchor="middle">Serialized Data</text>
+              </g>
+              <g title="Network Stack2">
+                <rect x="520" y="110" width="330" height="40"/>
+                <text x="685" y="140" text-anchor="middle">Network Stack</text>
+              </g>
+              <g title="Deserialize">
+                <rect x="520" y="60" width="330" height="40"/>
+                <text x="685" y="90" text-anchor="middle">Deserialize</text>
+              </g>
+              <g title="network" class="fragment">
+                <polyline points="10,80 850,80"/>
+              </g>
+              <g title="network" class="fragment">
+                <polyline points="10,130 850,130"/>
+              </g>
+            </svg>
+
+          </section>
+
+          <section>
+            <h2>Intra Process Publish / Subscribe</h2>
+            <br/>
+            <br/>
+            <svg id="publish-subscribe" width="860" height="330">
+              <marker id="publish-subscribe_end-triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z"/>
+              </marker>
+              <marker id="publish-subscribe_end-triangle-red" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#c7254e"/>
+              </marker>
+              <line x1="50%" y1="0" x2="50%" y2="30%" style="stroke: #cccccc;" stroke-dasharray="5,5"/>
+              <g title="Publisher">
+                <rect x="10" y="10" width="330" height="40"/>
+                <text x="175" y="40" text-anchor="middle">publish</text>
+              </g>
+              <g title="Subscriber">
+                <rect x="520" y="10" width="330" height="40"/>
+                <text x="685" y="40" text-anchor="middle">subscribe</text>
+              </g>
+              <g title="network" class="fragment">
+                <polyline points="260,50 260,100 600,100 600,50" marker-end="url(#publish-subscribe_end-triangle)"/>
+                <text x="50%" y="150" text-anchor="middle">Originally Published Data</text>
+              </g>
+            </svg>
+
           </section>
 
           <section data-markdown data-separator-notes="^Note:">
@@ -430,29 +507,11 @@ int main(int argc, char * argv[])
               - Avoids the network stack (TCP so no userspace packetization).
               - Avoids copies, though in an unsafe way:
 
-              <p style="font-size: small; margin-left: 50px">From: http://wiki.ros.org/roscpp/Overview/Publishers%20and%20Subscribers#Intraprocess_Publishing</p>
-              <pre>
-              Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intra-process subscribers. If you want to send another message, you must allocate a new one and send that.
-              </pre>
+              From <span style="font-size: large;">http://wiki.ros.org/roscpp/Overview/Publishers%20and%20Subscribers#Intraprocess_Publishing</span>:
+              - "Note that when publishing in this fashion, there is an implicit contract between you and roscpp: you may not modify the message you&#39;ve sent after you send it, since that pointer will be passed directly to any intra-process subscribers. If you want to send another message, you must allocate a new one and send that."
 
               Note:
 
-            </script>
-          </section>
-
-          <section data-markdown data-separator-notes="^Note:">
-            <script type="text/template">
-              # ROS 2
-              ## Will Make Improvements
-
-              Intra-process communication:
-
-              - Avoids serialization and deserialization.
-              - Avoids the network stack and packetizing of data.
-              - Avoid copies safely by providing `unique_ptr` based APIs.
-              - Avoid copies when publishing and subscribing to user-defined types.
-
-              Note:
             </script>
           </section>
 
@@ -485,12 +544,28 @@ int main(int argc, char * argv[])
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # Safely do Intra-Process
+              # ROS 2
+              ## Same Functionality, Safer Patterns
 
-              These issues in the current approach cause large differences in intra-process and inter process behavior.
+              Intra-process communication:
+
+              - Avoids serialization and deserialization.
+              - Avoids the network stack and packetizing of data.
+              - Safely avoids copies by providing `unique_ptr` based APIs.
+              - More consistency between intra-process and inter-process communications.
+
+              Note:
+            </script>
+          </section>
+
+          <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Do Intra-Process Safely
+
+              The issues with how ROS 1 does intra-process cause differences between intra-process and inter process behavior.
               How do we solve this?
 
-              *By tracking ownership with ownership semantics, i.e. `unique_ptr`*
+              - *By tracking ownership with ownership semantics, i.e. `unique_ptr`*
 
               Now consider how a `unique_ptr` works:
 
@@ -522,10 +597,10 @@ int main(int argc, char * argv[])
               publisher->publish(msg);  // This is non-blocking, the message goes into a queue.
               // The user no longer has access to the message created above.
               // Instead the middleware now owns it, and this is no longer valid:
-              msg->data = "testing2";  // <-- access nullptr, will cause segmentation fault.
+              // msg->data = "testing2";  // <-- access nullptr, will cause segmentation fault.
               ```
 
-              The benefit is that the middleware did not need to make a copy, but the user is not able to change the data they relinquished.
+              The benefit is that the middleware did not need to make a copy, but the user is not able to accidentally change the data they relinquished.
                - But it is not always the optimal solution, e.g. if you are reusing messages intentionally.
               Note:
             </script>
@@ -655,22 +730,31 @@ int main(int argc, char * argv[])
 
               So what can we say about these new ownership semantics:
 
-              - Can help avoid copies on publish.
-              - Can help avoid copies in rare cases in callbacks.
               - Can be used to create efficient pipelines, i.e. chains of 1 to 1 pub/sub.
-              - Cannot rely on the published pointer to be received by callback.
+              - But cannot rely on the published pointer to be received by callback.
+              - Not always the preferred signature, since you may want to reuse published `shared_ptr`&#39;s.
 
               Domains where this matters:
 
               - Using pub/sub within a high performance perception algorithm.
-               - In order to get optional introspection and modularity.
               - Systems where every `memcpy` costs battery life or latency.
-               - For example in cell phones and in low latency systems.
               Note:
             </script>
           </section>
 
           <section data-markdown data-separator-notes="^Note:">
+            <script type="text/template">
+              # Consistent Behavior between Inter and Intra
+
+              How does ROS 2 make publishing more similar in these two cases?
+              - Intra-process callbacks are handled outside of the user&#39;s callback.
+              - More middleware QoS and queueing behavior&#39;s are supported by intra-process.
+
+              Note:
+            </script>
+          </section>
+
+          <!-- <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
               # About Type Masquerading
 
@@ -740,11 +824,11 @@ int main(int argc, char * argv[])
               - Optional remote introspection with minimal overhead when not in use.
               Note:
             </script>
-          </section>
+          </section> -->
 
           <section data-markdown data-separator-notes="^Note:">
             <script type="text/template">
-              # What Next?
+              # What&#39;s Next?
 
               - Make the intermediate intra-process storage smarter (intelligently convert when beneficial).
               - Consider alternative implementations of the intra-process system (internally).
