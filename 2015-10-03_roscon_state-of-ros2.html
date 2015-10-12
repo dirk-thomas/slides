@@ -1266,7 +1266,10 @@ typedef struct RMW_PUBLIC_TYPE rmw_qos_profile_t
           }
           var animation = Reveal.getCurrentSlide().getAttribute('data-animation');
           if (animation) {
-            document.getElementById(animation).beginElement();
+            function startAnimation(element) {
+              element.beginElement();
+            }
+            setTimeout(startAnimation, 1500, document.getElementById(animation));
           }
         }
         previous_index_h = event.indexh;
